@@ -1,3 +1,5 @@
 export interface TradeEntity {
-    name: string
+    id?: string,
+    symbol: string,
+    userId: string
 }
