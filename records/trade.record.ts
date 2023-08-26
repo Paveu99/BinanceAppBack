@@ -13,7 +13,7 @@ export class TradeRecord implements TradeEntity {
     constructor(obj: TradeEntity) {
         this.id = obj.id
         this.symbol = obj.symbol;
-        this.userId = obj.symbol;
+        this.userId = obj.userId;
     }
 
     static async listAll(): Promise<TradeRecord[]> {

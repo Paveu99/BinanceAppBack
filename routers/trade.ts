@@ -8,15 +8,32 @@ export const tradesRouter = Router();
 
 tradesRouter
     .get('/', async (req, res) => {
-        const data = await getData();
-        res.json(data);
+        const trades = await getData();
+        const favouriteData = await TradeRecord.listAll();
+
+        res.json({
+            trades,
+            favouriteData,
+        });
     })
 
     .post('/', async (req, res) => {
         const newFavourite = new TradeRecord(req.body as AddNewFavourite);
-        await newFavourite.insert();
+        const favouriteData = await TradeRecord.listAll()
 
-        res.json(newFavourite);
+        const output = favouriteData
+            .filter((el) => {
+            return el.userId.includes(newFavourite.userId)
+        }).filter((el) => {
+            return el.symbol.includes(newFavourite.symbol)
+        })
+
+        if(output.length > 0) {
+            return
+        } else {
+            await newFavourite.insert();
+            res.json(newFavourite);
+        }
     })
 
     .delete('/:id', async (req, res) => {

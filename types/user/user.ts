@@ -1,3 +1,5 @@
 import {UserEntity} from "./user.entity";
 
-export type CreateUserReq = Omit<UserEntity, 'id'>
+export interface CreateUserReq extends UserEntity {
+    passwordConfirmation: string
+}

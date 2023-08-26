@@ -4,7 +4,6 @@ import {FieldPacket} from "mysql2";
 import {v4 as uuid} from "uuid";
 import {pool} from "../utils/db";
 import {genSalt, hash} from "bcrypt";
-import fetch from "node-fetch"
 
 type UserRecordsResults = [UserRecord[], FieldPacket[]]
 export class UserRecord implements UserEntity {
@@ -29,13 +28,16 @@ export class UserRecord implements UserEntity {
         this.password = obj.password;
     }
 
-    static async getOne(email: string, password: string): Promise<UserRecord> | null {
-        const [results] = await pool.execute("SELECT * FROM 'users' WHERE `email`==:email AND `password` = :password", {
-            email,
-            password
-        }) as UserRecordsResults;
+    static async listAll(): Promise<UserRecord[]> {
+        const [results] = await pool.execute("SELECT * FROM `users`") as UserRecordsResults
+        return results.map(obj => new UserRecord(obj))
+    }
 
-        return results.length === 0 ? null : new UserRecord(results[0])
+    static async getOne(email: string): Promise<UserRecord> | null {
+        const [results] = await pool.execute("SELECT * FROM `users` WHERE `email` = :email", {
+            email,
+        }) as UserRecordsResults;
+        return results.length === 0 ? null : new UserRecord(results[0]);
     }
 
     async insert(): Promise<string> {
