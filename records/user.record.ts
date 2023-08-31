@@ -1,9 +1,10 @@
-import {UserEntity} from "../types";
+import {UpdateNameSurnameType, UserEntity} from "../types";
 import {ValidationError} from "../utils/errors";
 import {FieldPacket} from "mysql2";
 import {v4 as uuid} from "uuid";
 import {pool} from "../utils/db";
 import {genSalt, hash} from "bcrypt";
+import {UpdateEmailType} from "../types";
 
 type UserRecordsResults = [UserRecord[], FieldPacket[]]
 export class UserRecord implements UserEntity {
@@ -40,6 +41,13 @@ export class UserRecord implements UserEntity {
         return results.length === 0 ? null : new UserRecord(results[0]);
     }
 
+    static async one(id: string): Promise<UserRecord> | null {
+        const [results] = await pool.execute("SELECT * FROM `users` WHERE `id` = :id", {
+            id,
+        }) as UserRecordsResults;
+        return results.length === 0 ? null : new UserRecord(results[0]);
+    }
+
     async insert(): Promise<string> {
         if (!this.id) {
             this.id = uuid()
@@ -57,10 +65,34 @@ export class UserRecord implements UserEntity {
         return this.id;
     }
 
+    async updateName(body: UpdateNameSurnameType): Promise<string> {
+
+        await pool.execute("UPDATE `users` SET `name` = :name, `surname` = :surname WHERE `id` = :id", {
+            id: this.id,
+            name: body.name,
+            surname: body.surname,
+        });
+
+        return this.name
+    }
+
+    async updateEmail(body: UpdateEmailType): Promise<string> {
+
+        await pool.execute("UPDATE `users` SET `email` = :email WHERE `id` = :id", {
+            id: this.id,
+            email: body.email,
+        });
+
+        return this.email
+    }
+
     async delete(): Promise<void> {
         await pool.execute("DELETE FROM `users` WHERE `id` = :id", {
             id: this.id,
         });
+        await pool.execute("DELETE FROM `trades` WHERE `userId` = :id", {
+            id: this.id,
+        })
     }
 }
 

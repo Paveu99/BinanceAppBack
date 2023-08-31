@@ -2,6 +2,7 @@ import Router from "express";
 import {UserRecord} from "../records/user.record";
 import {CreateUserReq} from "../types";
 import {compare} from "bcrypt";
+import {ValidationError} from "../utils/errors";
 
 export const userRouter = Router()
 
@@ -9,9 +10,9 @@ userRouter
 
     .post('/login', async (req, res) => {
         const {email, password} = req.body
-        // console.log(email, password)
+        console.log(email, password)
         const user = await UserRecord.getOne(email);
-        // console.log(user)
+        console.log(user)
         if (!user) {
             res.json({
                 answer: 'NOT OK'
@@ -47,7 +48,52 @@ userRouter
             })
         }
     })
-    //
-    // .delete('/del', async (req, res) => {
-    //     const trade = new UserRecord.getOne()
-    // })
+
+    .delete('/:id', async (req, res) => {
+        const user = await UserRecord.one(req.params.id)
+
+        if(!user) {
+            throw new ValidationError('No such user!');
+        }
+
+        await user.delete();
+
+        res.end();
+
+    })
+
+    .put('/name/:id', async (req, res) => {
+        const user = await UserRecord.one(req.params.id);
+        console.log(req.body)
+        if(!user) {
+            throw new ValidationError('No such user!');
+        }
+
+        await user.updateName(req.body)
+        res.json({
+            answer: `OK`,
+            name: req.body.name,
+        })
+    })
+
+    .put('/email/:id', async (req, res) => {
+        const user = await UserRecord.one(req.params.id);
+        console.log(req.body)
+        if(!user) {
+            throw new ValidationError('No such user!');
+        }
+
+        const allUsers = await UserRecord.listAll()
+
+        if (allUsers.map((el) => el.email).includes(req.body.email)) {
+            res.json({
+                answer: `There is already a user account registered with ${req.body.email}, please try again with different email`
+            })
+        } else {
+            await user.updateEmail(req.body)
+            res.json({
+                answer: `OK`,
+                email: req.body.email
+            })
+        }
+    })
