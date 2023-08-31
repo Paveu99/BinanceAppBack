@@ -9,11 +9,15 @@ export class TradeRecord implements TradeEntity {
     public id?: string
     public symbol: string;
     public userId: string;
+    public weightedAvgPrice: string;
+    public priceChangePercent: string;
 
     constructor(obj: TradeEntity) {
         this.id = obj.id
         this.symbol = obj.symbol;
         this.userId = obj.userId;
+        this.weightedAvgPrice = obj.weightedAvgPrice;
+        this.priceChangePercent = obj.priceChangePercent;
     }
 
     static async listAll(): Promise<TradeRecord[]> {
@@ -33,10 +37,12 @@ export class TradeRecord implements TradeEntity {
         if(!this.id) {
             this.id = uuid()
         }
-        await pool.execute("INSERT INTO `trades` VALUES(:id, :symbol, :userId)", {
+        await pool.execute("INSERT INTO `trades` VALUES(:id, :symbol, :userId, :weightedAvgPrice, :priceChangePercent)", {
             id: this.id,
             symbol: this.symbol,
+            weightedAvgPrice: this.weightedAvgPrice,
             userId: this.userId,
+            priceChangePercent: this.priceChangePercent,
         })
     }
 
