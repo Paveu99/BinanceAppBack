@@ -21,6 +21,15 @@ tradesRouter
                     priceChangePercent: el.priceChangePercent,
                 }
             })
+            .sort(function (a: WholeTradeEntity, b: WholeTradeEntity) {
+                if (a.symbol < b.symbol) {
+                    return -1;
+                }
+                if (a.symbol > b.symbol) {
+                    return 1;
+                }
+                return 0;
+            });
 
         function assigninig(target: TradeRecord, source: WholeTradeEntity) {
             return Object.assign(target, source)
@@ -34,6 +43,15 @@ tradesRouter
                     }
                 }
             })
+            .sort(function (a: WholeTradeEntity, b: WholeTradeEntity) {
+                if (a.symbol < b.symbol) {
+                    return -1;
+                }
+                if (a.symbol > b.symbol) {
+                    return 1;
+                }
+                return 0;
+            });
 
         res.json({
             filteredTrades,
