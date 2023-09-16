@@ -13,8 +13,8 @@ app.use(cors({
 
 app.use(json());
 
-app.use('/user', userRouter);
 app.use('/trades', tradesRouter);
+app.use('/user', userRouter);
 
 app.use(handleError);
 app.listen(3001, '0.0.0.0', () => {
