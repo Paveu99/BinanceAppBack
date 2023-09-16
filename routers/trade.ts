@@ -19,6 +19,10 @@ tradesRouter
                     symbol: el.symbol,
                     weightedAvgPrice: el.weightedAvgPrice,
                     priceChangePercent: el.priceChangePercent,
+                    lastPrice: el.lastPrice,
+                    openPrice: el.openPrice,
+                    highPrice: el.highPrice,
+                    lowPrice: el.lowPrice,
                 }
             })
             .sort(function (a: WholeTradeEntity, b: WholeTradeEntity) {
