@@ -48,8 +48,8 @@ export class TradeRecord implements TradeEntity {
         await pool.execute("INSERT INTO `trades` VALUES(:id, :symbol, :userId, :weightedAvgPrice, :priceChangePercent, :openPrice, :highPrice, :lastPrice, :lowPrice)", {
             id: this.id,
             symbol: this.symbol,
-            weightedAvgPrice: this.weightedAvgPrice,
             userId: this.userId,
+            weightedAvgPrice: this.weightedAvgPrice,
             priceChangePercent: this.priceChangePercent,
             openPrice: this.openPrice,
             highPrice: this.highPrice,

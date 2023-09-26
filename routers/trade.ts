@@ -33,7 +33,8 @@ tradesRouter
                     return 1;
                 }
                 return 0;
-            });
+            })
+            .filter((el: WholeTradeEntity) => Number(el.weightedAvgPrice) > 0);
 
         function assigninig(target: TradeRecord, source: WholeTradeEntity) {
             return Object.assign(target, source)
@@ -65,6 +66,7 @@ tradesRouter
 
     .post('/', async (req, res) => {
         const newFavourite = new TradeRecord(req.body as AddNewFavourite);
+        // console.log(req.body)
         const favouriteData = await TradeRecord.listAll()
 
         const output = favouriteData
@@ -78,7 +80,7 @@ tradesRouter
             .filter((el) => {
                 return el.userId.includes(newFavourite.userId)
             })
-
+        console.log(favouriteData)
         if (userOutput.length >= 5) {
             return
         } else {
